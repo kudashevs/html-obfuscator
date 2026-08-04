@@ -1,8 +1,8 @@
 {
     "name": "kudashevs/html-obfuscator",
-    "description": "A PHP implementation of an HTML code obfuscator.",
+    "description": "A PHP implementation of an HTML obfuscator.",
     "type": "library",
-    "keywords": ["php", "keywords", "obfuscator", "html obfuscator"],
+    "keywords": ["php", "keywords", "obfuscator", "html obfuscator", "html obfuscation"],
     "license": "MIT",
     "authors": [
         {
