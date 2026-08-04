@@ -17,7 +17,39 @@ class Obfuscator
         $this->settings = $settings;
     }
 
-    public function obfuscate(string $input): string
+    /**
+     * @param string $name
+     * @param array<array-key, string> $arguments
+     * @return string
+     */
+    public static function __callStatic(string $name, array $arguments): string
+    {
+        if ($name === 'obfuscate') {
+            return (new self())->obfuscate($arguments[0]);
+        }
+
+        throw new \BadMethodCallException(
+            sprintf('Static method %s does not exist.', $name)
+        );
+    }
+
+    /**
+     * @param string $name
+     * @param array<array-key, string> $arguments
+     * @return string
+     */
+    public function __call(string $name, array $arguments): string
+    {
+        if ($name === 'obfuscate') {
+            return $this->obfuscate($arguments[0]);
+        }
+
+        throw new \BadMethodCallException(
+            sprintf('Instance method %s does not exist.', $name)
+        );
+    }
+
+    private function obfuscate(string $input): string
     {
         $result = '';
 
