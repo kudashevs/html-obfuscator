@@ -1,5 +1,9 @@
 # HTML obfuscator
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/kudashevs/html-obfuscator.svg)](https://packagist.org/packages/kudashevs/html-obfuscator)
+[![Run Tests](https://github.com/kudashevs/html-obfuscator/actions/workflows/run-tests.yml/badge.svg)](https://github.com/kudashevs/html-obfuscator/actions/workflows/run-tests.yml)
+[![License MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
+
 A PHP implementation of an HTML code obfuscator.
 
 
@@ -22,11 +26,15 @@ use Kudashevs\HtmlObfuscator\Obfuscator;
 
 $text = 'the answer for 3 + 2 is';
 
+// static invocation
+$obfuscated = Obfuscator::obfuscate($text);
+
+// dynamic invocation
 $obfuscator = new Obfuscator();
 $obfuscated = $obfuscator->obfuscate($text);
 
 print_r($obfuscated);
-// will result into
+// both cases will result into
 t&#x0068;&#X65;&#0032;&#x61;&#x6e;&#115;w&#0101;&#X72;&#x0020;fo&#x0072;&#x0020;&#0051; +&#x20;2&#x0020;i&#x0073;
 ```
 
