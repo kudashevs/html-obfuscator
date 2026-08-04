@@ -4,7 +4,8 @@
 [![Run Tests](https://github.com/kudashevs/html-obfuscator/actions/workflows/run-tests.yml/badge.svg)](https://github.com/kudashevs/html-obfuscator/actions/workflows/run-tests.yml)
 [![License MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
 
-A PHP implementation of an HTML code obfuscator.
+A PHP implementation of an HTML obfuscator. The obfuscator encodes a provided text into different numeric codes to mask
+content from simple automated scrapers while the content keeps rendering normally in a browser.
 
 
 ## Installation
