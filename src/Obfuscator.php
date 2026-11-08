@@ -87,7 +87,7 @@ class Obfuscator
     private function hasPreferredStrategy(array $strategies): ?\Closure
     {
         if (
-            !is_null($this->settings['preferred_strategy'])
+            !empty($this->settings['preferred_strategy'])
             && array_key_exists($this->settings['preferred_strategy'], $strategies)
         ) {
             return $strategies[$this->settings['preferred_strategy']];
