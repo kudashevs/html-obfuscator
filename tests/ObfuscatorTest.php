@@ -40,12 +40,13 @@ class ObfuscatorTest extends TestCase
     #[Test]
     public function it_can_obfuscate(): void
     {
+        $input = str_repeat('test', 10);
         $obfuscated = $this->createObfuscator()
-            ->obfuscate(str_repeat('test', 10));
+            ->obfuscate($input);
 
         $this->assertIsString($obfuscated);
         $this->assertNotEmpty($obfuscated);
-        $this->assertNotSame(str_repeat('test', 10), $obfuscated);
+        $this->assertNotSame($input, $obfuscated);
     }
 
     #[Test]
