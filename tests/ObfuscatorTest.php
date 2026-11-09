@@ -30,9 +30,8 @@ class ObfuscatorTest extends TestCase
     #[Test]
     public function it_can_handle_empty(): void
     {
-        $obfuscator = new Obfuscator();
-
-        $obfuscated = $obfuscator->obfuscate('');
+        $obfuscated = $this->createObfuscator()
+            ->obfuscate('');
 
         $this->assertIsString($obfuscated);
         $this->assertEmpty($obfuscated);
@@ -41,9 +40,8 @@ class ObfuscatorTest extends TestCase
     #[Test]
     public function it_can_obfuscate(): void
     {
-        $obfuscator = new Obfuscator();
-
-        $obfuscated = $obfuscator->obfuscate(str_repeat('test', 10));
+        $obfuscated = $this->createObfuscator()
+            ->obfuscate(str_repeat('test', 10));
 
         $this->assertIsString($obfuscated);
         $this->assertNotEmpty($obfuscated);
@@ -53,18 +51,20 @@ class ObfuscatorTest extends TestCase
     #[Test]
     public function it_can_obfuscate_with_existing_strategy(): void
     {
-        $obfuscator = new Obfuscator(['preferred_strategy' => 'hash']);
+        $obfuscated = $this->createObfuscator(['preferred_strategy' => 'hash'])
+            ->obfuscate('test');
 
-        $this->assertSame('&#116;&#101;&#115;&#116;', $obfuscator->obfuscate('test'));
+        $this->assertSame('&#116;&#101;&#115;&#116;', $obfuscated);
     }
 
     #[Test]
     #[DataProvider('provideStrategies')]
     public function it_can_use_a_preferred_strategy(string $strategy, string $expected): void
     {
-        $obfuscator = new Obfuscator(['preferred_strategy' => $strategy]);
+        $obfuscated = $this->createObfuscator(['preferred_strategy' => $strategy])
+            ->obfuscate('test');
 
-        $this->assertSame($expected, $obfuscator->obfuscate('test'));
+        $this->assertSame($expected, $obfuscated);
     }
 
     public static function provideStrategies(): array
@@ -82,11 +82,8 @@ class ObfuscatorTest extends TestCase
     #[Test]
     public function it_can_use_default_strategy(): void
     {
-        $obfuscator = new Obfuscator([
-            'preferred_strategy' => 'default',
-        ]);
-
-        $obfuscated = $obfuscator->obfuscate('test');
+        $obfuscated = $this->createObfuscator(['preferred_strategy' => 'default'])
+            ->obfuscate('test');
 
         $this->assertSame('test', $obfuscated);
     }
@@ -94,9 +91,8 @@ class ObfuscatorTest extends TestCase
     #[Test]
     public function it_can_use_random_strategies(): void
     {
-        $obfuscator = new Obfuscator();
-
-        $obfuscated = $obfuscator->obfuscate('test');
+        $obfuscated = $this->createObfuscator()
+            ->obfuscate('test');
 
         $this->assertNotSame('test', $obfuscated);
     }
@@ -109,5 +105,10 @@ class ObfuscatorTest extends TestCase
         $this->assertIsString($obfuscated);
         $this->assertNotEmpty($obfuscated);
         $this->assertTrue(str_ends_with($obfuscated, '🚀'));
+    }
+
+    private function createObfuscator(array $arguments = []): Obfuscator
+    {
+        return new Obfuscator($arguments);
     }
 }
