@@ -109,12 +109,10 @@ class Obfuscator
     private function retrievePreferredStrategy(array $settings): ?\Closure
     {
         $strategies = $this->strategies();
+        $preferred = $settings['preferred_strategy'] ?? '';
 
-        if (
-            !empty($settings['preferred_strategy'])
-            && array_key_exists($settings['preferred_strategy'], $strategies)
-        ) {
-            return $strategies[$settings['preferred_strategy']];
+        if (array_key_exists($preferred, $strategies)) {
+            return $strategies[$preferred];
         }
 
         return null;
