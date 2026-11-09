@@ -84,9 +84,8 @@ class Obfuscator
             );
         }
 
-        return ($this->preferredStrategy)
-            ? $this->preferredStrategy
-            : $this->pickRandomElement(
+        return $this->preferredStrategy
+            ?? $this->pickRandomElement(
                 $this->strategies()
             );
     }
