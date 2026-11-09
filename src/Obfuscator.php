@@ -72,18 +72,24 @@ class Obfuscator
     protected function resolveStrategy(string $char): \Closure
     {
         if (str_contains(self::DANGEROUS_CHARACTERS, $char)) {
-            $safeStrategies = $this->safeStrategies();
-            $randomKey = array_rand($safeStrategies);
-
-            return $safeStrategies[$randomKey];
+            return $this->pickRandomStrategy(
+                $this->safeStrategies()
+            );
         }
 
         $strategies = $this->strategies();
 
-        if ($preferred = $this->hasPreferredStrategy($strategies)) {
-            return $preferred;
-        }
+        return ($preferred = $this->hasPreferredStrategy($strategies))
+            ? $preferred
+            : $this->pickRandomStrategy($strategies);
+    }
 
+    /**
+     * @param array<string, \Closure> $strategies
+     * @return \Closure
+     */
+    protected function pickRandomStrategy(array $strategies): \Closure
+    {
         $randomKey = array_rand($strategies);
 
         return $strategies[$randomKey];
