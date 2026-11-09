@@ -8,15 +8,22 @@ class Obfuscator
 {
     public const DANGEROUS_CHARACTERS = "<>&\"'";
 
-    /** @var array<string, string> */
-    private array $settings;
+    protected ?\Closure $preferredStrategy;
 
     /**
      * @param array<string, string> $settings
      */
     public function __construct(array $settings = [])
     {
-        $this->settings = $settings;
+        $this->init($settings);
+    }
+
+    /**
+     * @param array<string, string> $settings
+     */
+    protected function init(array $settings): void
+    {
+        $this->preferredStrategy = $this->retrievePreferredStrategy($settings);
     }
 
     /**
@@ -77,11 +84,11 @@ class Obfuscator
             );
         }
 
-        $strategies = $this->strategies();
-
-        return ($preferred = $this->hasPreferredStrategy($strategies))
-            ? $preferred
-            : $this->pickRandomStrategy($strategies);
+        return ($this->preferredStrategy)
+            ? $this->preferredStrategy
+            : $this->pickRandomStrategy(
+                $this->strategies()
+            );
     }
 
     /**
@@ -96,16 +103,18 @@ class Obfuscator
     }
 
     /**
-     * @param array<string, \Closure> $strategies
+     * @param array<string, string> $settings
      * @return \Closure|null
      */
-    private function hasPreferredStrategy(array $strategies): ?\Closure
+    private function retrievePreferredStrategy(array $settings): ?\Closure
     {
+        $strategies = $this->strategies();
+
         if (
-            !empty($this->settings['preferred_strategy'])
-            && array_key_exists($this->settings['preferred_strategy'], $strategies)
+            !empty($settings['preferred_strategy'])
+            && array_key_exists($settings['preferred_strategy'], $strategies)
         ) {
-            return $strategies[$this->settings['preferred_strategy']];
+            return $strategies[$settings['preferred_strategy']];
         }
 
         return null;
