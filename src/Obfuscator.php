@@ -6,6 +6,8 @@ namespace Kudashevs\HtmlObfuscator;
 
 class Obfuscator
 {
+    public const DANGEROUS_CHARACTERS = "<>&\"'";
+
     /** @var array<string, string> */
     private array $settings;
 
@@ -61,14 +63,21 @@ class Obfuscator
                 continue;
             }
 
-            $result .= $this->resolveStrategy()($charCode);
+            $result .= $this->resolveStrategy($char)($charCode);
         }
 
         return $result;
     }
 
-    protected function resolveStrategy(): \Closure
+    protected function resolveStrategy(string $char): \Closure
     {
+        if (str_contains(self::DANGEROUS_CHARACTERS, $char)) {
+            $safeStrategies = $this->safeStrategies();
+            $randomKey = array_rand($safeStrategies);
+
+            return $safeStrategies[$randomKey];
+        }
+
         $strategies = $this->strategies();
 
         if ($preferred = $this->hasPreferredStrategy($strategies)) {
@@ -109,5 +118,15 @@ class Obfuscator
             'Xdechex' => fn(int $code) => '&#X' . strtoupper(dechex($code)) . ';',
             'sdechex' => fn(int $code) => '&#x' . str_pad(dechex($code), 4, '0', STR_PAD_LEFT) . ';',
         ];
+    }
+
+    /**
+     * @return array<string, \Closure>
+     */
+    private function safeStrategies(): array
+    {
+        $unsafeStrategies = ['default'];
+
+        return array_diff_key($this->strategies(), array_flip($unsafeStrategies));
     }
 }

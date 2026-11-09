@@ -4,8 +4,8 @@ namespace Kudashevs\HtmlObfuscator\Tests;
 
 use Kudashevs\HtmlObfuscator\Obfuscator;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class ObfuscatorTest extends TestCase
 {
@@ -72,8 +72,8 @@ class ObfuscatorTest extends TestCase
     {
         return [
             'default' => ['default', 'test'],
-            'hash'    => ['hash', '&#116;&#101;&#115;&#116;'],
-            'strpad'  => ['strpad', '&#0116;&#0101;&#0115;&#0116;'],
+            'hash' => ['hash', '&#116;&#101;&#115;&#116;'],
+            'strpad' => ['strpad', '&#0116;&#0101;&#0115;&#0116;'],
             'xdechex' => ['xdechex', '&#x74;&#x65;&#x73;&#x74;'],
             'Xdechex' => ['Xdechex', '&#X74;&#X65;&#X73;&#X74;'],
             'sdechex' => ['sdechex', '&#x0074;&#x0065;&#x0073;&#x0074;'],
@@ -99,6 +99,23 @@ class ObfuscatorTest extends TestCase
     }
 
     #[Test]
+    public function it_must_obfuscate_dangerous_symbols(): void
+    {
+        $dangerousChars = $this->retrieveDangerousCharacters();
+        $dangerousInput = implode('', array_map(fn($ch) => str_repeat($ch, 10), $dangerousChars));
+
+        $obfuscated = $this->createObfuscator()
+            ->obfuscate($dangerousInput);
+
+        $stripped = preg_replace_callback('/&[^;\s]+;/', static function (array $matches) {
+            $decoded = html_entity_decode($matches[0], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            return ($decoded !== $matches[0]) ? '' : $matches[0];
+        }, $obfuscated);
+
+        $this->assertSame('', $stripped, "String has dangerous symbols: {$stripped}");
+    }
+
+    #[Test]
     public function it_preserves_non_ascii_symbols(): void
     {
         $obfuscated = Obfuscator::obfuscate('let\'s 🚀');
@@ -111,5 +128,10 @@ class ObfuscatorTest extends TestCase
     private function createObfuscator(array $arguments = []): Obfuscator
     {
         return new Obfuscator($arguments);
+    }
+
+    private function retrieveDangerousCharacters(): array
+    {
+        return str_split(Obfuscator::DANGEROUS_CHARACTERS);
     }
 }
