@@ -28,6 +28,23 @@ class ObfuscatorTest extends TestCase
     }
 
     #[Test]
+    public function it_throws_exception_on_invalid_utf8_input(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('UTF-8');
+
+        $this->createObfuscator()->obfuscate("ab\xFFc");
+    }
+
+    #[Test]
+    public function it_throws_exception_on_invalid_utf8_input_in_static_call(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Obfuscator::obfuscate("\xC3\x28");
+    }
+
+    #[Test]
     public function it_can_handle_empty(): void
     {
         $obfuscated = $this->createObfuscator()

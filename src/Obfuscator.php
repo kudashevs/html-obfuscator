@@ -58,8 +58,15 @@ class Obfuscator
         );
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     private function obfuscate(string $input): string
     {
+        if (!mb_check_encoding($input, 'UTF-8')) {
+            throw new \InvalidArgumentException('The input must be a valid UTF-8 string.');
+        }
+
         $result = '';
 
         foreach (mb_str_split($input) as $char) {
